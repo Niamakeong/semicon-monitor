@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semicon Sector Monitor</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-page:    #0a0c10;
+    --bg-card:    #0f1319;
+    --bg-card2:   #141920;
+    --border:     #1e2530;
+    --text-primary: #e2e8f0;
+    --text-muted:   #64748b;
+    --text-dim:     #334155;
+    --green:      #22c55e;
+    --green-dark: #16a34a;
+    --red:        #ef4444;
+    --red-dark:   #dc2626;
+    --accent:     #3b82f6;
+  }
+
+  body {
+    background: var(--bg-page);
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px 12px;
+    border-bottom: 0.5px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg-page);
+    z-index: 10;
+  }
+
+  .header-left { display: flex; flex-direction: column; gap: 2px; }
+  .header-title { font-size: 14px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.06em; text-transform: uppercase; }
+  .header-sub { font-size: 11px; color: var(--text-muted); }
+
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-dim); display: inline-block; }
+  .status-dot.live { background: var(--green); box-shadow: 0 0 6px #22c55e66; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .refresh-btn {
+    background: transparent;
+    border: 0.5px solid var(--border);
+    color: var(--text-muted);
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .refresh-btn:hover { border-color: #334155; color: var(--text-primary); }
+  .refresh-btn:disabled { opacity: 0.35; cursor: default; }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex;
+    gap: 6px;
+    padding: 10px 20px;
+    border-bottom: 0.5px solid var(--border);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase; margin-right: 4px; }
+  .filter-btn {
+    background: transparent;
+    border: 0.5px solid var(--border);
+    color: var(--text-muted);
+    padding: 3px 10px;
+    font-family: inherit;
+    font-size: 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+    padding: 14px 20px 24px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    padding: 13px 14px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #2a3441; }
+
+  .card-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 6px 6px 0 0;
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 9px;
+    margin-top: 4px;
+  }
+
+  .sector-name { font-size: 11px; font-weight: 600; color: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase; }
+  .sector-avg { font-size: 18px; font-weight: 600; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+
+  .bar-track { height: 2px; background: var(--border); border-radius: 1px; margin-bottom: 9px; }
+  .bar-fill { height: 2px; border-radius: 1px; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); min-width: 0; }
+
+  .counts { display: flex; gap: 10px; margin-bottom: 8px; }
+  .count-pill { font-size: 10px; color: var(--text-dim); }
+  .count-up { color: var(--green); font-weight: 600; }
+  .count-dn { color: var(--red); font-weight: 600; }
+
+  .divider { height: 0.5px; background: var(--border); margin-bottom: 8px; }
+
+  .ticker-list { display: flex; flex-direction: column; gap: 4px; }
+  .ticker-row { display: flex; justify-content: space-between; align-items: center; padding: 1px 0; }
+  .ticker-sym { font-size: 11px; color: var(--text-muted); letter-spacing: 0.05em; }
+  .ticker-pct { font-size: 11px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .ticker-bar { flex: 1; height: 1px; margin: 0 8px; background: var(--border); border-radius: 1px; position: relative; }
+  .ticker-bar-fill { height: 1px; border-radius: 1px; position: absolute; top: 0; }
+
+  .positive { color: var(--green); }
+  .negative { color: var(--red); }
+  .neutral   { color: var(--text-dim); }
+
+  .loading-overlay {
+    position: absolute; inset: 0;
+    background: #0f1319ee;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: var(--text-dim);
+    border-radius: 6px;
+    gap: 6px;
+  }
+  .spinner {
+    width: 10px; height: 10px;
+    border: 1.5px solid var(--border);
+    border-top-color: var(--text-muted);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-tag { font-size: 10px; color: var(--red); margin-top: 5px; opacity: 0.7; }
+
+  /* ── Summary bar ── */
+  .summary {
+    display: flex;
+    gap: 20px;
+    padding: 8px 20px;
+    border-bottom: 0.5px solid var(--border);
+    flex-wrap: wrap;
+    background: var(--bg-card2);
+  }
+  .summary-item { display: flex; flex-direction: column; gap: 1px; }
+  .summary-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+  .summary-val { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* ── Footer ── */
+  .footer { padding: 10px 20px; font-size: 10px; color: var(--text-dim); border-top: 0.5px solid var(--border); margin-top: 4px; }
+
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: 1fr; padding: 10px 12px; }
+    .header, .toolbar, .summary, .footer { padding-left: 12px; padding-right: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-title">Semicon Sector Monitor</div>
+    <div class="header-sub" id="last-update">—</div>
+  </div>
+  <div class="header-right">
+    <span class="status-dot" id="status-dot"></span>
+    <span style="font-size:10px;color:var(--text-dim)" id="status-text">idle</span>
+    <button class="refresh-btn" id="refresh-btn" onclick="fetchAll()">↻ Refresh</button>
+  </div>
+</div>
+
+<div class="summary" id="summary">
+  <div class="summary-item"><div class="summary-label">Sectors</div><div class="summary-val" id="s-sectors">8</div></div>
+  <div class="summary-item"><div class="summary-label">Tickers tracked</div><div class="summary-val" id="s-tickers">—</div></div>
+  <div class="summary-item"><div class="summary-label">Advancing</div><div class="summary-val positive" id="s-up">—</div></div>
+  <div class="summary-item"><div class="summary-label">Declining</div><div class="summary-val negative" id="s-dn">—</div></div>
+  <div class="summary-item"><div class="summary-label">Best sector</div><div class="summary-val positive" id="s-best">—</div></div>
+  <div class="summary-item"><div class="summary-label">Worst sector</div><div class="summary-val negative" id="s-worst">—</div></div>
+</div>
+
+<div class="toolbar">
+  <span class="filter-label">Sort:</span>
+  <button class="filter-btn active" onclick="setSort('default',this)">Default</button>
+  <button class="filter-btn" onclick="setSort('best',this)">Best first</button>
+  <button class="filter-btn" onclick="setSort('worst',this)">Worst first</button>
+  <button class="filter-btn" onclick="setSort('alpha',this)">A–Z</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="footer" id="footer">Data via Yahoo Finance · refreshes on demand · prices may be delayed 15 min</div>
+
+<script>
+const SECTORS = [
+  { name: "Fab Equipment",       color: "#3b82f6", tickers: ["AMAT","LRCX","KLAC","ASML","TER","ACLS"] },
+  { name: "Memory",              color: "#8b5cf6", tickers: ["MU","WDC","NAND","UMC","CRUS"] },
+  { name: "Logic / Foundry",     color: "#06b6d4", tickers: ["TSM","INTC","AMD","NVDA","QCOM","MRVL"] },
+  { name: "Packaging / Advanced",color: "#f59e0b", tickers: ["AMKR","ONTO","AMBA","FORM","ICHR"] },
+  { name: "AI Infra / Datacenter",color:"#ec4899", tickers: ["SMCI","DELL","VRT","ANET","NTAP","HPE"] },
+  { name: "Optics / Connectivity",color:"#22c55e", tickers: ["COHR","VIAV","LITE","IPGP","FNSR"] },
+  { name: "PCB / Materials",     color: "#f97316", tickers: ["TTM","KLIC","ENTG","CMC","MKS","OSIS"] },
+  { name: "EDA / IP",            color: "#64748b", tickers: ["CDNS","SNPS","ARM","ANSS","MANH"] }
+];
+
+const state = {};
+let sortMode = 'default';
+
+function cls(v) {
+  if (v === null || v === undefined) return 'neutral';
+  return v > 0 ? 'positive' : v < 0 ? 'negative' : 'neutral';
+}
+
+function fmt(v) {
+  if (v === null || v === undefined) return '—';
+  return (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+}
+
+function sectorAvg(name) {
+  const sec = SECTORS.find(s => s.name === name);
+  const d = state[name]?.data || {};
+  const vals = sec.tickers.map(t => d[t]).filter(v => v !== null && v !== undefined);
+  return vals.length ? vals.reduce((a,b) => a+b, 0) / vals.length : null;
+}
+
+function barW(v, max=5) {
+  if (!v) return '0%';
+  return Math.min(Math.abs(v) / max * 100, 100).toFixed(1) + '%';
+}
+
+function renderSummary() {
+  const allData = SECTORS.flatMap(s => {
+    const d = state[s.name]?.data || {};
+    return s.tickers.map(t => d[t]).filter(v => v !== null && v !== undefined);
+  });
+  const upCount = allData.filter(v => v > 0).length;
+  const dnCount = allData.filter(v => v < 0).length;
+  document.getElementById('s-tickers').textContent = allData.length || '—';
+  document.getElementById('s-up').textContent = upCount || '—';
+  document.getElementById('s-dn').textContent = dnCount || '—';
+
+  const avgs = SECTORS.map(s => ({ name: s.name, avg: sectorAvg(s.name) })).filter(s => s.avg !== null);
+  if (avgs.length) {
+    avgs.sort((a,b) => b.avg - a.avg);
+    document.getElementById('s-best').textContent = avgs[0].name + ' ' + fmt(avgs[0].avg);
+    document.getElementById('s-worst').textContent = avgs[avgs.length-1].name + ' ' + fmt(avgs[avgs.length-1].avg);
+  }
+}
+
+function sortedSectors() {
+  const s = [...SECTORS];
+  if (sortMode === 'best') s.sort((a,b) => (sectorAvg(b.name)||0) - (sectorAvg(a.name)||0));
+  else if (sortMode === 'worst') s.sort((a,b) => (sectorAvg(a.name)||0) - (sectorAvg(b.name)||0));
+  else if (sortMode === 'alpha') s.sort((a,b) => a.name.localeCompare(b.name));
+  return s;
+}
+
+function setSort(mode, el) {
+  sortMode = mode;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderGrid();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  sortedSectors().forEach(sec => {
+    const s = state[sec.name] || {};
+    const loaded = s.data || {};
+    const loading = !!s.loading;
+
+    const vals = sec.tickers.map(t => loaded[t]).filter(v => v !== null && v !== undefined);
+    const avg = vals.length ? vals.reduce((a,b) => a+b, 0) / vals.length : null;
+    const upCount = vals.filter(v => v > 0).length;
+    const dnCount = vals.filter(v => v < 0).length;
+
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const accentColor = avg === null ? '#1e2530' : avg > 0 ? '#16a34a' : '#dc2626';
+
+    const tickerRows = sec.tickers.map(t => {
+      const v = loaded[t];
+      const fillColor = v === null || v === undefined ? '#1e2530' : v > 0 ? '#16a34a' : '#dc2626';
+      const fillW = barW(v, 10);
+      const side = v >= 0 ? 'left' : 'right';
+      return `<div class="ticker-row">
+        <span class="ticker-sym">${t}</span>
+        <div class="ticker-bar"><div class="ticker-bar-fill" style="width:${fillW};background:${fillColor};${side==='right'?'right:0':'left:0'}"></div></div>
+        <span class="ticker-pct ${cls(v)}">${fmt(v)}</span>
+      </div>`;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="card-accent" style="background:${accentColor};"></div>
+      <div class="card-top">
+        <div class="sector-name">${sec.name}</div>
+        <div class="sector-avg ${cls(avg)}">${fmt(avg)}</div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${barW(avg,6)};background:${accentColor};"></div></div>
+      <div class="counts">
+        <span class="count-pill"><span class="count-up">${upCount}</span> up</span>
+        <span class="count-pill"><span class="count-dn">${dnCount}</span> down</span>
+      </div>
+      <div class="divider"></div>
+      <div class="ticker-list">${tickerRows}</div>
+      ${s.error ? '<div class="error-tag">fetch error — retry</div>' : ''}
+      ${loading ? '<div class="loading-overlay"><div class="spinner"></div>fetching…</div>' : ''}
+    `;
+    grid.appendChild(card);
+  });
+  renderSummary();
+}
+
+async function fetchTicker(sym) {
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1d&range=2d`;
+  const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+  const res = await fetch(proxy, { signal: AbortSignal.timeout(9000) });
+  if (!res.ok) throw new Error('http ' + res.status);
+  const json = await res.json();
+  const closes = json?.chart?.result?.[0]?.indicators?.quote?.[0]?.close;
+  if (!closes || closes.length < 2) throw new Error('no data');
+  const prev = closes.findLast(v => v !== null);
+  const curr = closes[closes.length - 1];
+  if (prev == null || curr == null) throw new Error('null close');
+  return ((curr - prev) / prev) * 100;
+}
+
+async function fetchSector(sec) {
+  state[sec.name] = { loading: true, data: state[sec.name]?.data || {}, error: false };
+  renderGrid();
+  const results = {};
+  await Promise.allSettled(sec.tickers.map(async t => {
+    try { results[t] = await fetchTicker(t); }
+    catch { results[t] = null; }
+  }));
+  state[sec.name] = { loading: false, data: results, error: false };
+  renderGrid();
+}
+
+async function fetchAll() {
+  const btn = document.getElementById('refresh-btn');
+  const dot = document.getElementById('status-dot');
+  const txt = document.getElementById('status-text');
+  btn.disabled = true;
+  dot.className = 'status-dot live';
+  txt.textContent = 'fetching…';
+  await Promise.all(SECTORS.map(fetchSector));
+  btn.disabled = false;
+  dot.className = 'status-dot';
+  txt.textContent = 'idle';
+  const now = new Date();
+  document.getElementById('last-update').textContent =
+    'last update ' + now.toLocaleDateString('en-MY', {day:'numeric',month:'short'}) +
+    ' · ' + now.toLocaleTimeString('en-MY', {hour:'2-digit',minute:'2-digit'});
+}
+
+renderGrid();
+fetchAll();
+</script>
+</body>
+</html>

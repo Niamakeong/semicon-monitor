@@ -30,11 +30,10 @@
 }
 body{background:var(--bg);color:var(--text);font-family:'Inter','Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.5;min-height:100vh}
 
-/* HEADER */
 .hdr{display:flex;justify-content:space-between;align-items:center;padding:16px 22px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:20;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .hdr-title{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.01em}
 .hdr-sub{font-size:12px;color:var(--muted);margin-top:2px}
-.hdr-right{display:flex;align-items:center;gap:10px}
+.hdr-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--dim);flex-shrink:0}
 .dot.live{background:var(--green);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
@@ -45,27 +44,23 @@ body{background:var(--bg);color:var(--text);font-family:'Inter','Segoe UI',syste
 .btn-copy:hover{background:#2a3a50;border-color:#2a3a50}
 .btn-copy.copied{background:var(--green);border-color:var(--green)}
 
-/* SUMMARY */
 .summary{display:flex;border-bottom:1px solid var(--border);background:#fff;overflow-x:auto}
 .sum-item{padding:10px 20px;border-right:1px solid var(--border);flex-shrink:0}
 .sum-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;font-weight:600}
 .sum-val{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 
-/* TOOLBAR */
 .toolbar{display:flex;align-items:center;gap:6px;padding:10px 22px;border-bottom:1px solid var(--border);flex-wrap:wrap;background:var(--bg-card2)}
 .tb-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-right:2px;white-space:nowrap}
 .tb-sep{width:1px;height:22px;background:var(--border);margin:0 8px;flex-shrink:0}
-.fbtn{background:#fff;border:1px solid var(--border);color:var(--muted);padding:5px 12px;font-family:inherit;font-size:12px;font-weight:600;border-radius:6px;cursor:pointer;letter-spacing:.02em;transition:all .15s;white-space:nowrap}
+.fbtn{background:#fff;border:1px solid var(--border);color:var(--muted);padding:5px 12px;font-family:inherit;font-size:12px;font-weight:600;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap}
 .fbtn:hover{border-color:var(--border2);color:var(--text)}
 .fbtn.active{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
 .trade-btn{background:#fff;border:1px solid var(--border);color:var(--muted);padding:5px 12px;font-family:inherit;font-size:12px;font-weight:600;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap}
 .trade-btn:hover{border-color:var(--border2);color:var(--text)}
 .trade-btn.on{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
 
-/* GRID */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;padding:16px 22px 32px}
 
-/* CARD */
 .card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;overflow:hidden;transition:box-shadow .2s,border-color .2s}
 .card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);border-color:var(--border2)}
 .card.hidden{display:none}
@@ -93,24 +88,28 @@ canvas.spark{width:100%;height:32px;display:block}
 .vol-tag{font-size:9px;padding:2px 5px;border-radius:3px;background:var(--blue-bg);color:var(--blue);font-weight:700;letter-spacing:.04em;flex-shrink:0}
 .obs-badge{font-size:9px;padding:2px 5px;border-radius:3px;background:var(--obs-bg);color:var(--obs-text);font-weight:600;flex-shrink:0}
 
-.loading-ov{position:absolute;inset:0;background:rgba(255,255,255,.88);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);border-radius:10px;gap:8px;z-index:5;font-weight:500}
-.spinner{width:12px;height:12px;border:2px solid var(--dim);border-top-color:var(--muted);border-radius:50%;animation:spin .7s linear infinite}
+.loading-ov{position:absolute;inset:0;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);border-radius:10px;gap:8px;z-index:5;font-weight:500}
+.spinner{width:14px;height:14px;border:2px solid var(--dim);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .err-tag{font-size:11px;color:var(--red);margin-top:6px;font-weight:500}
 
-/* TOAST */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:100}
+.progress-bar{height:2px;background:var(--blue-bg);position:fixed;top:0;left:0;z-index:50;transition:width .3s ease;border-radius:0 2px 2px 0}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:100;white-space:nowrap}
 .toast.show{opacity:1}
 
-.footer{padding:10px 22px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);letter-spacing:.02em;background:#fff}
+.footer{padding:10px 22px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);background:#fff}
 
-@media(max-width:600px){
+@media(max-width:640px){
   .grid{grid-template-columns:1fr;padding:10px 12px 24px}
   .hdr,.toolbar,.summary,.footer{padding-left:12px;padding-right:12px}
+  .hdr{flex-wrap:wrap;gap:8px}
 }
 </style>
 </head>
 <body>
+
+<div class="progress-bar" id="prog" style="width:0%"></div>
 
 <div class="hdr">
   <div>
@@ -149,87 +148,120 @@ canvas.spark{width:100%;height:32px;display:block}
 </div>
 
 <div class="grid" id="grid"></div>
-<div class="footer">Data via Financial Modeling Prep · prices delayed ~15 min · VOL↑ = volume &gt;1.5× 20-day avg · greyed = observe only (CN / KR)</div>
+<div class="footer">Data via Twelve Data · prices delayed ~15 min · VOL↑ = today's volume &gt;1.5× avg · greyed tickers = observe only (CN / KR)</div>
 <div class="toast" id="toast"></div>
 
 <script>
-const API_KEY = 'hA4pP8ytrnkL6YedCIfecghdIHgP3YjH';
+const TD_KEY = '735a1271f96946299260949a1daf9147';
 const NON_TRADE = new Set(['CN','KR']);
 const FLAGS = {US:'🇺🇸',TW:'🇹🇼',HK:'🇭🇰',EU:'🇪🇺',JP:'🇯🇵',KR:'🇰🇷',CN:'🇨🇳'};
 
+// Twelve Data uses exchange suffix format: symbol:EXCHANGE
+// For non-US we specify exchange explicitly
 const SECTORS = [
   { name:'Fabless', color:'#2563eb', tickers:[
-    {sym:'NVDA',region:'US'},{sym:'AVGO',region:'US'},
-    {sym:'GOOG',region:'US'},{sym:'MRVL',region:'US'},
+    {sym:'NVDA',region:'US',td:'NVDA'},
+    {sym:'AVGO',region:'US',td:'AVGO'},
+    {sym:'GOOG',region:'US',td:'GOOG'},
+    {sym:'MRVL',region:'US',td:'MRVL'},
   ]},
   { name:'FAB / Advanced Packaging', color:'#0891b2', tickers:[
-    {sym:'TSM',region:'TW'},{sym:'INTC',region:'US'},
-    {sym:'AMKR',region:'US'},{sym:'ASX',region:'US'},
-    {sym:'6239.TW',region:'TW',label:'Powertech',fmp:'6239.TWO'},
+    {sym:'TSM', region:'US',td:'TSM'},
+    {sym:'INTC',region:'US',td:'INTC'},
+    {sym:'AMKR',region:'US',td:'AMKR'},
+    {sym:'ASX', region:'US',td:'ASX'},
+    {sym:'6239.TW',region:'TW',label:'Powertech',td:'6239:TWSE'},
   ]},
   { name:'CPU', color:'#7c3aed', tickers:[
-    {sym:'ARM',region:'US'},{sym:'AMD',region:'US'},
+    {sym:'ARM',region:'US',td:'ARM'},
+    {sym:'AMD',region:'US',td:'AMD'},
   ]},
   { name:'Metrology', color:'#d97706', tickers:[
-    {sym:'CAMT',region:'US'},{sym:'ONTO',region:'US'},
-    {sym:'KLAC',region:'US'},{sym:'NVMI',region:'US'},
-    {sym:'FORM',region:'US'},
+    {sym:'CAMT',region:'US',td:'CAMT'},
+    {sym:'ONTO',region:'US',td:'ONTO'},
+    {sym:'KLAC',region:'US',td:'KLAC'},
+    {sym:'NVMI',region:'US',td:'NVMI'},
+    {sym:'FORM',region:'US',td:'FORM'},
   ]},
   { name:'Deposition', color:'#db2777', tickers:[
-    {sym:'LRCX',region:'US'},{sym:'AMAT',region:'US'},
-    {sym:'AEIS',region:'US'},
+    {sym:'LRCX',region:'US',td:'LRCX'},
+    {sym:'AMAT',region:'US',td:'AMAT'},
+    {sym:'AEIS',region:'US',td:'AEIS'},
   ]},
   { name:'Packaging Equipment', color:'#ea580c', tickers:[
-    {sym:'522.HK',region:'HK',label:'ASMPT',fmp:'0522.HK'},
-    {sym:'KLIC',region:'US'},
+    {sym:'522.HK', region:'HK',label:'ASMPT',td:'522:HKEX'},
+    {sym:'KLIC',   region:'US',td:'KLIC'},
   ]},
   { name:'Photonics', color:'#16a34a', tickers:[
-    {sym:'LITE',region:'US'},{sym:'COHR',region:'US'},
-    {sym:'CIEN',region:'US'},{sym:'AAOI',region:'US'},
-    {sym:'FN',region:'US'},{sym:'NOK',region:'US'},
-    {sym:'AXTI',region:'US'},{sym:'GLW',region:'US'},
-    {sym:'MTSI',region:'US'},{sym:'SMTC',region:'US'},
-    {sym:'TSEM',region:'US'},{sym:'GFS',region:'US'},
-    {sym:'6451.TWO',region:'TW',label:'Shunsin',fmp:'6451.TWO'},
-    {sym:'5801.T',region:'JP',label:'Furukawa',fmp:'5801.T'},
-    {sym:'300308.SZ',region:'CN',label:'Innolight',fmp:'300308.SZ'},
-    {sym:'300502.SZ',region:'CN',label:'Eoptolink',fmp:'300502.SZ'},
-    {sym:'300394.SZ',region:'CN',label:'Suzhou TFC',fmp:'300394.SZ'},
-    {sym:'002281.SZ',region:'CN',label:'Accelink',fmp:'002281.SZ'},
-    {sym:'300570.SZ',region:'CN',label:'T&S Comm',fmp:'300570.SZ'},
+    {sym:'LITE',region:'US',td:'LITE'},
+    {sym:'COHR',region:'US',td:'COHR'},
+    {sym:'CIEN',region:'US',td:'CIEN'},
+    {sym:'AAOI',region:'US',td:'AAOI'},
+    {sym:'FN',  region:'US',td:'FN'},
+    {sym:'NOK', region:'US',td:'NOK'},
+    {sym:'AXTI',region:'US',td:'AXTI'},
+    {sym:'GLW', region:'US',td:'GLW'},
+    {sym:'MTSI',region:'US',td:'MTSI'},
+    {sym:'SMTC',region:'US',td:'SMTC'},
+    {sym:'TSEM',region:'US',td:'TSEM'},
+    {sym:'GFS', region:'US',td:'GFS'},
+    {sym:'6451.TWO', region:'TW',label:'Shunsin',   td:'6451:TPEX'},
+    {sym:'5801.T',   region:'JP',label:'Furukawa',  td:'5801:TSE'},
+    {sym:'300308.SZ',region:'CN',label:'Innolight', td:'300308:SZSE'},
+    {sym:'300502.SZ',region:'CN',label:'Eoptolink', td:'300502:SZSE'},
+    {sym:'300394.SZ',region:'CN',label:'Suzhou TFC',td:'300394:SZSE'},
+    {sym:'002281.SZ',region:'CN',label:'Accelink',  td:'002281:SZSE'},
+    {sym:'300570.SZ',region:'CN',label:'T&S Comm',  td:'300570:SZSE'},
   ]},
   { name:'Photonics Testing', color:'#0d9488', tickers:[
-    {sym:'VIAV',region:'US'},{sym:'KEYS',region:'US'},
-    {sym:'TER',region:'US'},
-    {sym:'2360.TW',region:'TW',label:'Chroma ATE',fmp:'2360.TW'},
-    {sym:'300757.SZ',region:'CN',label:'Robotechnik',fmp:'300757.SZ'},
+    {sym:'VIAV',region:'US',td:'VIAV'},
+    {sym:'KEYS',region:'US',td:'KEYS'},
+    {sym:'TER', region:'US',td:'TER'},
+    {sym:'2360.TW',  region:'TW',label:'Chroma ATE',  td:'2360:TWSE'},
+    {sym:'300757.SZ',region:'CN',label:'Robotechnik', td:'300757:SZSE'},
   ]},
   { name:'Memory', color:'#9333ea', tickers:[
-    {sym:'SNDK',region:'US'},{sym:'MU',region:'US'},
-    {sym:'STX',region:'US'},{sym:'WDC',region:'US'},
-    {sym:'005930.KS',region:'KR',label:'Samsung',fmp:'005930.KS'},
-    {sym:'000660.KS',region:'KR',label:'SK Hynix',fmp:'000660.KS'},
+    {sym:'SNDK',region:'US',td:'SNDK'},
+    {sym:'MU',  region:'US',td:'MU'},
+    {sym:'STX', region:'US',td:'STX'},
+    {sym:'WDC', region:'US',td:'WDC'},
+    {sym:'005930.KS',region:'KR',label:'Samsung', td:'005930:KRX'},
+    {sym:'000660.KS',region:'KR',label:'SK Hynix',td:'000660:KRX'},
   ]},
   { name:'Memory Testing', color:'#475569', tickers:[
-    {sym:'6857.T',region:'JP',label:'Advantest',fmp:'6857.T'},
+    {sym:'6857.T',region:'JP',label:'Advantest',td:'6857:TSE'},
   ]},
   { name:'Cooling', color:'#0284c7', tickers:[
-    {sym:'VRT',region:'US'},{sym:'NVT',region:'US'},
-    {sym:'ETN',region:'US'},
-    {sym:'3324.TWO',region:'TW',label:'Auras',fmp:'3324.TWO'},
-    {sym:'2308.TW',region:'TW',label:'Delta',fmp:'2308.TW'},
-    {sym:'002837.SZ',region:'CN',label:'Envicool',fmp:'002837.SZ'},
+    {sym:'VRT',region:'US',td:'VRT'},
+    {sym:'NVT',region:'US',td:'NVT'},
+    {sym:'ETN',region:'US',td:'ETN'},
+    {sym:'3324.TWO', region:'TW',label:'Auras',    td:'3324:TPEX'},
+    {sym:'2308.TW',  region:'TW',label:'Delta',    td:'2308:TWSE'},
+    {sym:'002837.SZ',region:'CN',label:'Envicool', td:'002837:SZSE'},
   ]},
   { name:'BTM Energy', color:'#b45309', tickers:[
-    {sym:'BE',region:'US'},{sym:'GEV',region:'US'},
-    {sym:'FTAI',region:'US'},{sym:'SEI',region:'US'},
-    {sym:'CAT',region:'US'},{sym:'CMI',region:'US'},
-    {sym:'HWM',region:'US'},{sym:'BW',region:'US'},
+    {sym:'BE',  region:'US',td:'BE'},
+    {sym:'GEV', region:'US',td:'GEV'},
+    {sym:'FTAI',region:'US',td:'FTAI'},
+    {sym:'SEI', region:'US',td:'SEI'},
+    {sym:'CAT', region:'US',td:'CAT'},
+    {sym:'CMI', region:'US',td:'CMI'},
+    {sym:'HWM', region:'US',td:'HWM'},
+    {sym:'BW',  region:'US',td:'BW'},
   ]},
 ];
 
-const state={}, histData={};
-let regionFilter='ALL', tradeOnly=false;
+// Flatten all tickers for batch fetching
+const ALL_TICKERS = [];
+SECTORS.forEach(sec => sec.tickers.forEach(t => {
+  if(!ALL_TICKERS.find(x=>x.sym===t.sym)) ALL_TICKERS.push(t);
+}));
+
+const priceData = {};   // sym -> {pct, volume, avgVolume}
+const histData  = {};   // sectorName -> [pct array]
+const state     = {};   // sectorName -> {loading, error}
+let regionFilter = 'ALL', tradeOnly = false;
+let fetchedCount = 0, totalToFetch = 0;
 
 function isObs(r){ return NON_TRADE.has(r); }
 function visTickers(sec){
@@ -242,28 +274,29 @@ function visTickers(sec){
 
 function pctColor(v, obs){
   if(v===null||v===undefined) return 'var(--muted)';
-  if(obs) return v>0?'#86efac':v<0?'#fca5a5':'var(--obs-text)';
+  if(obs) return v>0?'#4ade80':v<0?'#f87171':'var(--obs-text)';
   const a=Math.abs(v);
   if(v>0){ return a>=5?'#15803d':a>=3?'#16a34a':a>=1?'#22c55e':'#4ade80'; }
   if(v<0){ return a>=5?'#b91c1c':a>=3?'#dc2626':a>=1?'#ef4444':'#f87171'; }
   return 'var(--muted)';
 }
-function pctBg(v){
-  if(v===null||v===undefined) return 'transparent';
-  return v>0?'var(--green-bg)':v<0?'var(--red-bg)':'transparent';
-}
 function fmt(v){ if(v===null||v===undefined) return '—'; return (v>=0?'+':'')+v.toFixed(2)+'%'; }
 function barW(v,max){ if(!v) return '0%'; return Math.min(Math.abs(v)/max*100,100).toFixed(1)+'%'; }
 function secAvg(sec){
-  const vis=visTickers(sec), d=state[sec.name]?.data||{};
-  const vals=vis.map(t=>d[t.sym]).filter(v=>v!==null&&v!==undefined);
+  const vis=visTickers(sec);
+  const vals=vis.map(t=>priceData[t.sym]?.pct).filter(v=>v!==null&&v!==undefined);
   return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
 }
 
-function showToast(msg, duration=2500){
+function setProgress(pct){
+  document.getElementById('prog').style.width = pct+'%';
+  document.getElementById('prog').style.background = pct>=100?'var(--green)':'var(--blue)';
+}
+
+function showToast(msg,duration=2500){
   const t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), duration);
+  setTimeout(()=>t.classList.remove('show'),duration);
 }
 
 function renderSummary(){
@@ -271,8 +304,11 @@ function renderSummary(){
   document.getElementById('s-sec').textContent=visSecs.length;
   let total=0,up=0,dn=0;
   visSecs.forEach(sec=>{
-    const d=state[sec.name]?.data||{};
-    visTickers(sec).forEach(t=>{ const v=d[t.sym]; if(v===null||v===undefined) return; total++; if(v>0)up++; else if(v<0)dn++; });
+    visTickers(sec).forEach(t=>{
+      const v=priceData[t.sym]?.pct;
+      if(v===null||v===undefined) return;
+      total++; if(v>0)up++; else if(v<0)dn++;
+    });
   });
   document.getElementById('s-tick').textContent=total||'—';
   document.getElementById('s-up').textContent=up||'—';
@@ -296,13 +332,12 @@ function drawSpark(canvas, hist){
   const ctx=canvas.getContext('2d');
   ctx.scale(dpr,dpr);
   ctx.clearRect(0,0,W,H);
-  const min=Math.min(...hist), max=Math.max(...hist), range=max-min||1;
-  const pts=hist.map((v,i)=>({x:(i/(hist.length-1))*(W-4)+2, y:H-((v-min)/range)*(H-6)-3}));
+  const min=Math.min(...hist),max=Math.max(...hist),range=max-min||1;
+  const pts=hist.map((v,i)=>({x:(i/(hist.length-1))*(W-4)+2,y:H-((v-min)/range)*(H-6)-3}));
   const up=hist[hist.length-1]>=hist[0];
-  const lineCol=up?'#16a34a':'#dc2626';
   ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
   pts.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));
-  ctx.strokeStyle=lineCol; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.strokeStyle=up?'#16a34a':'#dc2626'; ctx.lineWidth=1.5; ctx.stroke();
   ctx.beginPath(); ctx.moveTo(pts[0].x,H);
   pts.forEach(p=>ctx.lineTo(p.x,p.y));
   ctx.lineTo(pts[pts.length-1].x,H); ctx.closePath();
@@ -313,28 +348,31 @@ function renderGrid(){
   const grid=document.getElementById('grid');
   grid.innerHTML='';
   SECTORS.forEach(sec=>{
-    const vis=visTickers(sec), s=state[sec.name]||{};
+    const vis=visTickers(sec);
+    const s=state[sec.name]||{};
     const card=document.createElement('div');
     card.className='card'+(vis.length===0?' hidden':'');
     if(vis.length===0){ grid.appendChild(card); return; }
-    const loaded=s.data||{}, volData=s.vol||{};
-    const vals=vis.map(t=>loaded[t.sym]).filter(v=>v!==null&&v!==undefined);
+
+    const vals=vis.map(t=>priceData[t.sym]?.pct).filter(v=>v!==null&&v!==undefined);
     const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
     const upC=vals.filter(v=>v>0).length, dnC=vals.filter(v=>v<0).length;
     const acCol=avg===null?'var(--border)':avg>0?'#16a34a':'#dc2626';
     const spId='sp_'+sec.name.replace(/\W/g,'_');
 
     const rows=vis.map(t=>{
-      const v=loaded[t.sym], obs=isObs(t.region);
+      const d=priceData[t.sym];
+      const v=d?.pct, obs=isObs(t.region);
       const col=pctColor(v,obs);
       const fw=barW(v,10), fs=(v||0)>=0?'left:0':'right:0';
       const fc=v===null||v===undefined?'var(--dim)':v>0?'#16a34a':'#dc2626';
       const label=t.label||t.sym;
+      const volSpike=d?.volume&&d?.avgVolume&&d.volume>d.avgVolume*1.5;
       return `<div class="t-row${obs?' obs':''}">
         <span class="t-sym" title="${t.sym}">${FLAGS[t.region]||''} ${label}</span>
         <div class="t-bar"><div class="t-bar-fill" style="width:${fw};background:${fc};${fs}"></div></div>
         <span class="t-pct" style="color:${col}">${fmt(v)}</span>
-        ${volData[t.sym]?'<span class="vol-tag">VOL↑</span>':''}
+        ${volSpike?'<span class="vol-tag">VOL↑</span>':''}
         ${obs?'<span class="obs-badge">observe</span>':''}
       </div>`;
     }).join('');
@@ -350,7 +388,7 @@ function renderGrid(){
       <div class="counts"><span class="cpill"><span class="cup">${upC}</span> up</span><span class="cpill"><span class="cdn">${dnC}</span> down</span></div>
       <div class="divider"></div>
       <div class="ticker-list">${rows}</div>
-      ${s.error?'<div class="err-tag">⚠ fetch error — retry</div>':''}
+      ${s.error?'<div class="err-tag">⚠ Some tickers failed to load</div>':''}
       ${s.loading?'<div class="loading-ov"><div class="spinner"></div>Fetching…</div>':''}
     `;
     grid.appendChild(card);
@@ -360,78 +398,101 @@ function renderGrid(){
   renderSummary();
 }
 
-// FMP API fetch
-async function fetchTickerFMP(sym){
-  const fmpSym = encodeURIComponent(sym);
-  // Quote endpoint
-  const quoteUrl = `https://financialmodelingprep.com/api/v3/quote/${fmpSym}?apikey=${API_KEY}`;
-  const res = await fetch(quoteUrl, {signal:AbortSignal.timeout(10000)});
+// Twelve Data: batch quote up to 120 symbols per call
+async function fetchBatchQuotes(tickers){
+  // Build comma-separated symbol list with exchange suffix
+  const symbols = tickers.map(t=>t.td).join(',');
+  const url = `https://api.twelvedata.com/quote?symbol=${encodeURIComponent(symbols)}&apikey=${TD_KEY}`;
+  const res = await fetch(url, {signal:AbortSignal.timeout(15000)});
   if(!res.ok) throw new Error('http '+res.status);
   const json = await res.json();
-  if(!json||!json.length) throw new Error('no data');
-  const q = json[0];
-  const pct = q.changesPercentage;
-  if(pct===null||pct===undefined) throw new Error('no pct');
-
-  // Volume spike check
-  let volSpike = false;
-  try {
-    if(q.volume && q.avgVolume) {
-      volSpike = q.volume > q.avgVolume * 1.5;
+  // If single ticker returned, wrap in object
+  const data = tickers.length===1 ? {[tickers[0].td]: json} : json;
+  tickers.forEach(t=>{
+    const q = data[t.td];
+    if(!q || q.status==='error' || !q.percent_change){
+      priceData[t.sym] = {pct:null, volume:null, avgVolume:null};
+      return;
     }
-  } catch(e){}
-
-  // Historical for sparkline (5 days)
-  let hist5 = [];
-  try {
-    const histUrl = `https://financialmodelingprep.com/api/v3/historical-price-full/${fmpSym}?timeseries=6&apikey=${API_KEY}`;
-    const hRes = await fetch(histUrl, {signal:AbortSignal.timeout(10000)});
-    if(hRes.ok){
-      const hJson = await hRes.json();
-      if(hJson?.historical?.length >= 2){
-        hist5 = hJson.historical.slice().reverse().map(d=>d.close);
-      }
-    }
-  } catch(e){}
-
-  return {pct, volSpike, hist5};
+    priceData[t.sym] = {
+      pct: parseFloat(q.percent_change),
+      volume: parseFloat(q.volume)||null,
+      avgVolume: parseFloat(q.average_volume)||null,
+    };
+  });
 }
 
-async function fetchSector(sec){
-  state[sec.name]={loading:true,data:state[sec.name]?.data||{},vol:state[sec.name]?.vol||{},error:false};
-  renderGrid();
-  const results={},vols={},allHist=[];
-  await Promise.allSettled(sec.tickers.map(async t=>{
+// Twelve Data: time series for sparkline (last 6 days)
+async function fetchSparklines(){
+  // Fetch sparklines sector by sector to keep calls manageable
+  for(const sec of SECTORS){
+    // Use first 3 US tickers per sector for sparkline average (saves calls)
+    const sample = sec.tickers.filter(t=>t.region==='US' || t.region==='TW').slice(0,3);
+    if(!sample.length) continue;
+    const symbols = sample.map(t=>t.td).join(',');
     try{
-      const fmpSym = t.fmp || t.sym;
-      const {pct,volSpike,hist5}=await fetchTickerFMP(fmpSym);
-      results[t.sym]=pct; vols[t.sym]=volSpike;
-      if(hist5.length) allHist.push(hist5);
-    } catch(e){
-      results[t.sym]=null; vols[t.sym]=false;
-    }
-  }));
-  if(allHist.length){
-    const len=Math.min(...allHist.map(h=>h.length));
-    const avg=Array.from({length:len},(_,i)=>{
-      const vs=allHist.map(h=>h[i]).filter(v=>v!=null);
-      return vs.length?vs.reduce((a,b)=>a+b,0)/vs.length:null;
-    }).filter(v=>v!==null);
-    if(avg.length>=2){ const base=avg[0]; histData[sec.name]=avg.map(v=>((v-base)/base)*100); }
+      const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(symbols)}&interval=1day&outputsize=6&apikey=${TD_KEY}`;
+      const res = await fetch(url, {signal:AbortSignal.timeout(12000)});
+      if(!res.ok) continue;
+      const json = await res.json();
+      const allHist = [];
+      sample.forEach(t=>{
+        const d = sample.length===1 ? json : json[t.td];
+        if(!d||d.status==='error'||!d.values) return;
+        const closes = d.values.slice().reverse().map(v=>parseFloat(v.close));
+        if(closes.length>=2) allHist.push(closes);
+      });
+      if(allHist.length){
+        const len=Math.min(...allHist.map(h=>h.length));
+        const avg=Array.from({length:len},(_,i)=>{
+          const vs=allHist.map(h=>h[i]).filter(v=>!isNaN(v));
+          return vs.length?vs.reduce((a,b)=>a+b,0)/vs.length:null;
+        }).filter(v=>v!==null);
+        if(avg.length>=2){ const base=avg[0]; histData[sec.name]=avg.map(v=>((v-base)/base)*100); }
+      }
+    } catch(e){ /* skip sparkline on error */ }
   }
-  state[sec.name]={loading:false,data:results,vol:vols,error:false};
-  renderGrid();
 }
 
 async function fetchAll(){
   const btn=document.getElementById('ref-btn'),dot=document.getElementById('dot'),txt=document.getElementById('status-txt');
   btn.disabled=true; dot.className='dot live'; txt.textContent='fetching…';
-  await Promise.all(SECTORS.map(fetchSector));
+  setProgress(5);
+
+  // Mark all sectors loading
+  SECTORS.forEach(sec=>{ state[sec.name]={loading:true,error:false}; });
+  renderGrid();
+
+  // Batch fetch quotes — Twelve Data allows up to 120 symbols per call
+  const BATCH = 100;
+  const batches = [];
+  for(let i=0;i<ALL_TICKERS.length;i+=BATCH) batches.push(ALL_TICKERS.slice(i,i+BATCH));
+
+  let done=0;
+  for(const batch of batches){
+    try{ await fetchBatchQuotes(batch); }
+    catch(e){ batch.forEach(t=>{ priceData[t.sym]={pct:null,volume:null,avgVolume:null}; }); }
+    done+=batch.length;
+    setProgress(10 + (done/ALL_TICKERS.length)*60);
+  }
+
+  // Mark sectors done
+  SECTORS.forEach(sec=>{ state[sec.name]={loading:false,error:false}; });
+  renderGrid();
+  setProgress(75);
+
+  // Fetch sparklines in background
+  await fetchSparklines();
+  setProgress(100);
+  renderGrid();
+
   btn.disabled=false; dot.className='dot'; txt.textContent='idle';
   const now=new Date();
   document.getElementById('last-update').textContent=
     'Last refresh: '+now.toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'})+
     ' · '+now.toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'});
+
+  setTimeout(()=>setProgress(0), 800);
 }
 
 function setRegion(r,el){
@@ -450,75 +511,72 @@ function toggleTrade(){
 }
 
 function copyForClaude(){
-  const now = new Date();
-  const timeStr = now.toLocaleString('en-MY',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-  let lines = [];
+  const now=new Date();
+  const timeStr=now.toLocaleString('en-MY',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const lines=[];
   lines.push('=== SEMICON SECTOR MONITOR — EOD SNAPSHOT ===');
-  lines.push('Generated: '+timeStr);
-  lines.push('Region filter: '+regionFilter+' | Tradeable only: '+(tradeOnly?'YES':'NO'));
+  lines.push('Generated: '+timeStr+' MYT');
   lines.push('');
 
-  // Summary
   const visSecs=SECTORS.filter(s=>visTickers(s).length>0);
-  let total=0,up=0,dn=0,nullCount=0;
+  let total=0,up=0,dn=0;
   visSecs.forEach(sec=>{
-    const d=state[sec.name]?.data||{};
     visTickers(sec).forEach(t=>{
-      const v=d[t.sym];
-      if(v===null||v===undefined){nullCount++;return;}
+      const v=priceData[t.sym]?.pct;
+      if(v===null||v===undefined) return;
       total++; if(v>0)up++; else if(v<0)dn++;
     });
   });
-  lines.push(`SUMMARY: ${visSecs.length} sectors | ${total} tickers with data | ${up} advancing | ${dn} declining`);
+  lines.push(`SUMMARY: ${SECTORS.length} sectors | ${total} tickers with data | ${up} advancing | ${dn} declining`);
   lines.push('');
 
-  // Sector ranking
   const avgs=SECTORS.map(s=>({name:s.name,avg:secAvg(s)})).filter(s=>s.avg!==null);
   avgs.sort((a,b)=>b.avg-a.avg);
-  lines.push('SECTOR RANKING (best to worst):');
-  avgs.forEach((s,i)=>{ lines.push(`  ${i+1}. ${s.name}: ${fmt(s.avg)}`); });
+  lines.push('SECTOR RANKING (best → worst):');
+  avgs.forEach((s,i)=>lines.push(`  ${i+1}. ${s.name}: ${fmt(s.avg)}`));
   lines.push('');
 
-  // Volume spikes
   const spikes=[];
   SECTORS.forEach(sec=>{
-    const v=state[sec.name]?.vol||{};
-    sec.tickers.forEach(t=>{ if(v[t.sym]) spikes.push((t.label||t.sym)+' ('+sec.name+')'); });
+    sec.tickers.forEach(t=>{
+      const d=priceData[t.sym];
+      if(d?.volume&&d?.avgVolume&&d.volume>d.avgVolume*1.5) spikes.push((t.label||t.sym)+' ['+sec.name+']');
+    });
   });
   if(spikes.length){ lines.push('VOLUME SPIKES: '+spikes.join(', ')); lines.push(''); }
 
-  // Per sector detail
   lines.push('--- SECTOR DETAIL ---');
   SECTORS.forEach(sec=>{
-    const vis=visTickers(sec);
-    if(!vis.length) return;
-    const d=state[sec.name]?.data||{};
-    const vd=state[sec.name]?.vol||{};
+    const vis=sec.tickers; // always include all for report
     const avg=secAvg(sec);
     lines.push('');
-    lines.push('['+sec.name+'] avg: '+fmt(avg));
+    lines.push('['+sec.name+'] sector avg: '+fmt(avg));
     vis.forEach(t=>{
-      const v=d[t.sym];
-      const label=t.label||t.sym;
+      const d=priceData[t.sym];
+      const v=d?.pct;
+      const label=(t.label||t.sym).padEnd(16);
       const obs=isObs(t.region)?'[observe]':'';
-      const vol=vd[t.sym]?'[VOL↑]':'';
-      const flag=FLAGS[t.region]||'';
-      lines.push(`  ${flag} ${label.padEnd(18)} ${fmt(v).padStart(8)}  ${vol}${obs}`);
+      const vol=d?.volume&&d?.avgVolume&&d.volume>d.avgVolume*1.5?'[VOL↑]':'';
+      lines.push(`  ${FLAGS[t.region]||''} ${label} ${fmt(v).padStart(8)}  ${vol}${obs}`);
     });
   });
 
   lines.push('');
   lines.push('=== END SNAPSHOT ===');
-  lines.push('Please provide an EOD analysis covering: sector rotation, standout movers, volume spike significance, regional divergence (US vs Asia), and any flags to carry into the next session.');
+  lines.push('');
+  lines.push('Please provide an EOD analysis covering:');
+  lines.push('1. Sector rotation — which sectors led and lagged, any divergence');
+  lines.push('2. Standout movers — biggest individual % moves, especially with VOL↑ confirmation');
+  lines.push('3. Regional divergence — US vs Taiwan/HK/Japan/Korea splits');
+  lines.push('4. BTM Energy vs Semicon — any macro signal in their relative performance');
+  lines.push('5. Flags for the next session — anything worth watching or acting on');
 
-  const text = lines.join('\n');
-  navigator.clipboard.writeText(text).then(()=>{
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
     const btn=document.getElementById('copy-btn');
-    btn.textContent='✓ Copied!';
-    btn.classList.add('copied');
-    showToast('Snapshot copied — paste it into Claude');
-    setTimeout(()=>{ btn.textContent='Copy for Claude'; btn.classList.remove('copied'); }, 2500);
-  }).catch(()=>{ showToast('Copy failed — try again'); });
+    btn.textContent='✓ Copied!'; btn.classList.add('copied');
+    showToast('Snapshot copied — paste into Claude for EOD report');
+    setTimeout(()=>{ btn.textContent='Copy for Claude'; btn.classList.remove('copied'); },2500);
+  }).catch(()=>showToast('Copy failed — try again'));
 }
 
 renderGrid();

@@ -14,7 +14,6 @@
   --red:#dc2626;--red-bg:#fef2f2;
   --blue:#2563eb;--blue-bg:#eff6ff;
   --amber:#d97706;--amber-bg:#fffbeb;
-  --obs-text:#a0aec0;--obs-bg:#f7f8fa;
 }
 body{background:var(--bg);color:var(--text);font-family:'Inter','Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.5;min-height:100vh}
 
@@ -45,7 +44,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter','Segoe UI',syste
 .fbtn.active{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
 .trade-btn{background:#fff;border:1px solid var(--border);color:var(--muted);padding:5px 12px;font-family:inherit;font-size:12px;font-weight:600;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap}
 .trade-btn:hover{border-color:var(--border2);color:var(--text)}
-.trade-btn.on{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;padding:16px 22px 32px}
 
@@ -68,50 +66,34 @@ canvas.spark{width:100%;height:32px;display:block}
 .ticker-list{display:flex;flex-direction:column;gap:5px}
 .t-row{display:flex;align-items:center;gap:6px;padding:2px 0}
 .t-sym{font-size:13px;color:var(--muted);font-weight:600;min-width:90px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.t-row.obs .t-sym{color:var(--obs-text)}
-.t-row.obs .t-pct{opacity:.5}
 .t-bar{flex:1;height:2px;background:var(--dim);border-radius:1px;position:relative;overflow:hidden}
 .t-bar-fill{height:2px;border-radius:1px;position:absolute;top:0}
 .t-pct{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;min-width:58px;text-align:right}
 .vol-tag{font-size:9px;padding:2px 5px;border-radius:3px;background:var(--blue-bg);color:var(--blue);font-weight:700;letter-spacing:.04em;flex-shrink:0}
-.obs-badge{font-size:9px;padding:2px 5px;border-radius:3px;background:var(--obs-bg);color:var(--obs-text);font-weight:600;flex-shrink:0}
 
-.loading-ov{position:absolute;inset:0;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);border-radius:10px;gap:8px;z-index:5;font-weight:500}
-.spinner{width:14px;height:14px;border:2px solid var(--dim);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.err-tag{font-size:11px;color:var(--red);margin-top:6px;font-weight:500}
-
-.prog{height:3px;background:var(--blue);position:fixed;top:0;left:0;z-index:100;transition:width .4s ease;border-radius:0 2px 2px 0}
-
-/* status panel */
-.status-panel{background:#fff;border-bottom:1px solid var(--border);padding:8px 22px;font-size:11px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
-.status-ok{color:var(--green);font-weight:600}
-.status-fail{color:var(--red);font-weight:600}
+.info-banner{background:var(--blue-bg);border-bottom:1px solid #bfdbfe;padding:10px 22px;font-size:12px;color:#1e40af;font-weight:500}
+.info-banner code{background:#dbeafe;padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono','Fira Code',monospace;font-size:11px}
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:200;white-space:nowrap}
 .toast.show{opacity:1}
 .footer{padding:10px 22px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);background:#fff}
-@media(max-width:640px){.grid{grid-template-columns:1fr;padding:10px 12px 24px}.hdr,.toolbar,.summary,.footer,.status-panel{padding-left:12px;padding-right:12px}.hdr{flex-wrap:wrap;gap:8px}}
+@media(max-width:640px){.grid{grid-template-columns:1fr;padding:10px 12px 24px}.hdr,.toolbar,.summary,.footer,.info-banner{padding-left:12px;padding-right:12px}.hdr{flex-wrap:wrap;gap:8px}}
 </style>
 </head>
 <body>
-<div class="prog" id="prog" style="width:0"></div>
 
 <div class="hdr">
   <div>
     <div class="hdr-title">Semicon Sector Monitor</div>
-    <div class="hdr-sub" id="last-update">—</div>
+    <div class="hdr-sub" id="last-update">Paste data from IBKR script to populate</div>
   </div>
   <div class="hdr-right">
-    <span class="dot" id="dot"></span>
-    <span style="font-size:12px;color:var(--muted);font-weight:500" id="status-txt">idle</span>
-    <button class="btn" id="ref-btn" onclick="fetchAll()">↻ Refresh</button>
     <button class="btn-copy" id="copy-btn" onclick="copyForClaude()">Copy for Claude</button>
   </div>
 </div>
 
 <div class="summary">
-  <div class="sum-item"><div class="sum-label">Sectors</div><div class="sum-val" id="s-sec">—</div></div>
+  <div class="sum-item"><div class="sum-label">Sectors</div><div class="sum-val" id="s-sec">12</div></div>
   <div class="sum-item"><div class="sum-label">Tickers</div><div class="sum-val" id="s-tick">—</div></div>
   <div class="sum-item"><div class="sum-label">Advancing</div><div class="sum-val" style="color:var(--green)" id="s-up">—</div></div>
   <div class="sum-item"><div class="sum-label">Declining</div><div class="sum-val" style="color:var(--red)" id="s-dn">—</div></div>
@@ -127,131 +109,104 @@ canvas.spark{width:100%;height:32px;display:block}
   <button class="fbtn" onclick="setRegion('HK',this)">🇭🇰 HK</button>
   <button class="fbtn" onclick="setRegion('EU',this)">🇪🇺 Europe</button>
   <button class="fbtn" onclick="setRegion('JP',this)">🇯🇵 Japan</button>
-  <button class="fbtn" onclick="setRegion('KR',this)">🇰🇷 Korea</button>
-  <button class="fbtn" onclick="setRegion('CN',this)">🇨🇳 China</button>
   <div class="tb-sep"></div>
-  <button class="trade-btn" id="trade-btn" onclick="toggleTrade()">👁 Tradeable only</button>
+  <button class="trade-btn" id="paste-btn" onclick="showPasteDialog()">📋 Paste IBKR data</button>
 </div>
 
-<div class="status-panel" id="status-panel" style="display:none"></div>
+<div class="info-banner">
+  Run <code>python3 semicon_fetch.py</code> in Terminal → script copies snapshot to clipboard → click <strong>Paste IBKR data</strong> to load, or paste directly into Claude for EOD report.
+</div>
+
 <div class="grid" id="grid"></div>
-<div class="footer">Data via Yahoo Finance · VOL↑ = today's volume &gt;1.5× avg · greyed = observe only (CN / KR)</div>
+<div class="footer">Data via IBKR TWS · VOL↑ = today's volume &gt;1.5× 20-day avg · regions: US · Taiwan · HK · Japan · Europe</div>
 <div class="toast" id="toast"></div>
 
-<script>
-const NON_TRADE = new Set(['CN','KR']);
-const FLAGS = {US:'🇺🇸',TW:'🇹🇼',HK:'🇭🇰',EU:'🇪🇺',JP:'🇯🇵',KR:'🇰🇷',CN:'🇨🇳'};
+<!-- Paste dialog -->
+<div id="paste-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;display:none;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:12px;padding:24px;width:90%;max-width:560px;box-shadow:0 8px 32px rgba(0,0,0,.15)">
+    <div style="font-size:15px;font-weight:700;margin-bottom:6px">Paste IBKR Snapshot</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Paste the output from <code style="background:#f0f2f5;padding:1px 5px;border-radius:3px;font-size:11px">semicon_fetch.py</code> below</div>
+    <textarea id="paste-area" style="width:100%;height:200px;border:1px solid var(--border);border-radius:6px;padding:10px;font-family:monospace;font-size:11px;resize:vertical;outline:none" placeholder="Paste snapshot here..."></textarea>
+    <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+      <button onclick="closePasteDialog()" style="background:#fff;border:1px solid var(--border2);color:var(--muted);padding:7px 16px;font-family:inherit;font-size:12px;font-weight:600;border-radius:6px;cursor:pointer">Cancel</button>
+      <button onclick="loadSnapshot()" style="background:var(--text);border:1px solid var(--text);color:#fff;padding:7px 16px;font-family:inherit;font-size:12px;font-weight:600;border-radius:6px;cursor:pointer">Load Data</button>
+    </div>
+  </div>
+</div>
 
-// Yahoo Finance symbol mapping
-// US tickers: plain symbol
-// Non-US: Yahoo suffix format
+<script>
+const FLAGS = {US:'🇺🇸',TW:'🇹🇼',HK:'🇭🇰',EU:'🇪🇺',JP:'🇯🇵'};
+
 const SECTORS = [
   { name:'Fabless', color:'#2563eb', tickers:[
-    {sym:'NVDA',region:'US',yf:'NVDA'},
-    {sym:'AVGO',region:'US',yf:'AVGO'},
-    {sym:'GOOG',region:'US',yf:'GOOG'},
-    {sym:'MRVL',region:'US',yf:'MRVL'},
+    {sym:'NVDA',region:'US'},{sym:'AVGO',region:'US'},
+    {sym:'GOOG',region:'US'},{sym:'MRVL',region:'US'},
   ]},
   { name:'FAB / Advanced Packaging', color:'#0891b2', tickers:[
-    {sym:'TSM', region:'US',yf:'TSM'},
-    {sym:'INTC',region:'US',yf:'INTC'},
-    {sym:'AMKR',region:'US',yf:'AMKR'},
-    {sym:'ASX', region:'US',yf:'ASX'},
-    {sym:'6239.TW',region:'TW',label:'Powertech',yf:'6239.TW'},
+    {sym:'TSM',region:'US'},{sym:'INTC',region:'US'},
+    {sym:'AMKR',region:'US'},{sym:'ASX',region:'US'},
+    {sym:'6239',region:'TW',label:'Powertech'},
   ]},
   { name:'CPU', color:'#7c3aed', tickers:[
-    {sym:'ARM',region:'US',yf:'ARM'},
-    {sym:'AMD',region:'US',yf:'AMD'},
+    {sym:'ARM',region:'US'},{sym:'AMD',region:'US'},
   ]},
   { name:'Metrology', color:'#d97706', tickers:[
-    {sym:'CAMT',region:'US',yf:'CAMT'},
-    {sym:'ONTO',region:'US',yf:'ONTO'},
-    {sym:'KLAC',region:'US',yf:'KLAC'},
-    {sym:'NVMI',region:'US',yf:'NVMI'},
-    {sym:'FORM',region:'US',yf:'FORM'},
+    {sym:'CAMT',region:'US'},{sym:'ONTO',region:'US'},
+    {sym:'KLAC',region:'US'},{sym:'NVMI',region:'US'},
+    {sym:'FORM',region:'US'},
   ]},
   { name:'Deposition', color:'#db2777', tickers:[
-    {sym:'LRCX',region:'US',yf:'LRCX'},
-    {sym:'AMAT',region:'US',yf:'AMAT'},
-    {sym:'AEIS',region:'US',yf:'AEIS'},
+    {sym:'LRCX',region:'US'},{sym:'AMAT',region:'US'},
+    {sym:'AEIS',region:'US'},
   ]},
   { name:'Packaging Equipment', color:'#ea580c', tickers:[
-    {sym:'522.HK',region:'HK',label:'ASMPT',yf:'0522.HK'},
-    {sym:'KLIC',  region:'US',yf:'KLIC'},
+    {sym:'522',region:'HK',label:'ASMPT'},
+    {sym:'KLIC',region:'US'},
   ]},
   { name:'Photonics', color:'#16a34a', tickers:[
-    {sym:'LITE',region:'US',yf:'LITE'},
-    {sym:'COHR',region:'US',yf:'COHR'},
-    {sym:'CIEN',region:'US',yf:'CIEN'},
-    {sym:'AAOI',region:'US',yf:'AAOI'},
-    {sym:'FN',  region:'US',yf:'FN'},
-    {sym:'NOK', region:'US',yf:'NOK'},
-    {sym:'AXTI',region:'US',yf:'AXTI'},
-    {sym:'GLW', region:'US',yf:'GLW'},
-    {sym:'MTSI',region:'US',yf:'MTSI'},
-    {sym:'SMTC',region:'US',yf:'SMTC'},
-    {sym:'TSEM',region:'US',yf:'TSEM'},
-    {sym:'GFS', region:'US',yf:'GFS'},
-    {sym:'6451.TWO',region:'TW',label:'Shunsin',   yf:'6451.TWO'},
-    {sym:'5801.T',  region:'JP',label:'Furukawa',  yf:'5801.T'},
-    {sym:'300308.SZ',region:'CN',label:'Innolight', yf:'300308.SZ'},
-    {sym:'300502.SZ',region:'CN',label:'Eoptolink', yf:'300502.SZ'},
-    {sym:'300394.SZ',region:'CN',label:'Suzhou TFC',yf:'300394.SZ'},
-    {sym:'002281.SZ',region:'CN',label:'Accelink',  yf:'002281.SZ'},
-    {sym:'300570.SZ',region:'CN',label:'T&S Comm',  yf:'300570.SZ'},
+    {sym:'LITE',region:'US'},{sym:'COHR',region:'US'},
+    {sym:'CIEN',region:'US'},{sym:'AAOI',region:'US'},
+    {sym:'FN',region:'US'},{sym:'NOK',region:'EU'},
+    {sym:'AXTI',region:'US'},{sym:'GLW',region:'US'},
+    {sym:'MTSI',region:'US'},{sym:'SMTC',region:'US'},
+    {sym:'TSEM',region:'US'},{sym:'GFS',region:'US'},
+    {sym:'6451',region:'TW',label:'Shunsin'},
+    {sym:'5801',region:'JP',label:'Furukawa'},
   ]},
   { name:'Photonics Testing', color:'#0d9488', tickers:[
-    {sym:'VIAV',region:'US',yf:'VIAV'},
-    {sym:'KEYS',region:'US',yf:'KEYS'},
-    {sym:'TER', region:'US',yf:'TER'},
-    {sym:'2360.TW',  region:'TW',label:'Chroma ATE', yf:'2360.TW'},
-    {sym:'300757.SZ',region:'CN',label:'Robotechnik',yf:'300757.SZ'},
+    {sym:'VIAV',region:'US'},{sym:'KEYS',region:'US'},
+    {sym:'TER',region:'US'},
+    {sym:'2360',region:'TW',label:'Chroma ATE'},
   ]},
   { name:'Memory', color:'#9333ea', tickers:[
-    {sym:'SNDK',region:'US',yf:'SNDK'},
-    {sym:'MU',  region:'US',yf:'MU'},
-    {sym:'STX', region:'US',yf:'STX'},
-    {sym:'WDC', region:'US',yf:'WDC'},
-    {sym:'005930.KS',region:'KR',label:'Samsung', yf:'005930.KS'},
-    {sym:'000660.KS',region:'KR',label:'SK Hynix',yf:'000660.KS'},
+    {sym:'SNDK',region:'US'},{sym:'MU',region:'US'},
+    {sym:'STX',region:'US'},{sym:'WDC',region:'US'},
   ]},
   { name:'Memory Testing', color:'#475569', tickers:[
-    {sym:'6857.T',region:'JP',label:'Advantest',yf:'6857.T'},
+    {sym:'6857',region:'JP',label:'Advantest'},
   ]},
   { name:'Cooling', color:'#0284c7', tickers:[
-    {sym:'VRT',region:'US',yf:'VRT'},
-    {sym:'NVT',region:'US',yf:'NVT'},
-    {sym:'ETN',region:'US',yf:'ETN'},
-    {sym:'3324.TWO',region:'TW',label:'Auras',   yf:'3324.TWO'},
-    {sym:'2308.TW', region:'TW',label:'Delta',   yf:'2308.TW'},
-    {sym:'002837.SZ',region:'CN',label:'Envicool',yf:'002837.SZ'},
+    {sym:'VRT',region:'US'},{sym:'NVT',region:'US'},
+    {sym:'ETN',region:'US'},
+    {sym:'3324',region:'TW',label:'Auras'},
+    {sym:'2308',region:'TW',label:'Delta'},
   ]},
   { name:'BTM Energy', color:'#b45309', tickers:[
-    {sym:'BE',  region:'US',yf:'BE'},
-    {sym:'GEV', region:'US',yf:'GEV'},
-    {sym:'FTAI',region:'US',yf:'FTAI'},
-    {sym:'SEI', region:'US',yf:'SEI'},
-    {sym:'CAT', region:'US',yf:'CAT'},
-    {sym:'CMI', region:'US',yf:'CMI'},
-    {sym:'HWM', region:'US',yf:'HWM'},
-    {sym:'BW',  region:'US',yf:'BW'},
+    {sym:'BE',region:'US'},{sym:'GEV',region:'US'},
+    {sym:'FTAI',region:'US'},{sym:'SEI',region:'US'},
+    {sym:'CAT',region:'US'},{sym:'CMI',region:'US'},
+    {sym:'HWM',region:'US'},{sym:'BW',region:'US'},
   ]},
 ];
 
-const priceData={}, histData={}, fetchStatus={};
-let regionFilter='ALL', tradeOnly=false;
+const priceData={}, histData={};
+let regionFilter='ALL';
 
-function isObs(r){ return NON_TRADE.has(r); }
 function visTickers(sec){
-  return sec.tickers.filter(t=>{
-    if(tradeOnly && isObs(t.region)) return false;
-    if(regionFilter!=='ALL' && t.region!==regionFilter) return false;
-    return true;
-  });
+  return sec.tickers.filter(t=> regionFilter==='ALL' || t.region===regionFilter);
 }
-function pctColor(v,obs){
+function pctColor(v){
   if(v===null||v===undefined) return 'var(--muted)';
-  if(obs) return v>0?'#4ade80':v<0?'#f87171':'var(--obs-text)';
   const a=Math.abs(v);
   if(v>0){ return a>=5?'#15803d':a>=3?'#16a34a':a>=1?'#22c55e':'#4ade80'; }
   if(v<0){ return a>=5?'#b91c1c':a>=3?'#dc2626':a>=1?'#ef4444':'#f87171'; }
@@ -263,60 +218,10 @@ function secAvg(sec){
   const vals=visTickers(sec).map(t=>priceData[t.sym]?.pct).filter(v=>v!==null&&v!==undefined);
   return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
 }
-function setProgress(p){ document.getElementById('prog').style.width=p+'%'; }
 function showToast(msg,ms=2500){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),ms); }
-
-// Yahoo Finance — try two endpoints, both without proxy (direct browser call)
-async function fetchYahoo(yfsym){
-  // Endpoint 1: v8 chart
-  const url1 = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yfsym)}?interval=1d&range=5d&corsDomain=finance.yahoo.com`;
-  const url2 = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yfsym)}?interval=1d&range=5d&corsDomain=finance.yahoo.com`;
-
-  let json = null;
-  for(const url of [url1, url2]){
-    try{
-      const res = await fetch(url, {
-        signal: AbortSignal.timeout(8000),
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'Mozilla/5.0'
-        }
-      });
-      if(res.ok){ json = await res.json(); break; }
-    } catch(e){ continue; }
-  }
-  if(!json) throw new Error('both endpoints failed');
-
-  const result = json?.chart?.result?.[0];
-  if(!result) throw new Error('no result');
-  const closes = result.indicators?.quote?.[0]?.close;
-  const volumes = result.indicators?.quote?.[0]?.volume;
-  if(!closes||closes.length<2) throw new Error('no closes');
-
-  const valid = closes.filter(v=>v!==null);
-  const prev  = valid[valid.length-2];
-  const curr  = valid[valid.length-1];
-  if(prev==null||curr==null) throw new Error('null close');
-
-  const pct = ((curr-prev)/prev)*100;
-
-  let volume=null, avgVolume=null, volSpike=false;
-  if(volumes&&volumes.length>=2){
-    volume = volumes[volumes.length-1];
-    const validVols = volumes.filter(v=>v!==null);
-    if(validVols.length>=3){
-      avgVolume = validVols.slice(0,-1).reduce((a,b)=>a+b,0)/validVols.slice(0,-1).length;
-      if(volume && avgVolume) volSpike = volume > avgVolume*1.5;
-    }
-  }
-
-  const hist5 = valid.slice(-6);
-  return {pct, volume, avgVolume, volSpike, hist5};
-}
 
 function renderSummary(){
   const visSecs=SECTORS.filter(s=>visTickers(s).length>0);
-  document.getElementById('s-sec').textContent=visSecs.length;
   let total=0,up=0,dn=0;
   visSecs.forEach(sec=>visTickers(sec).forEach(t=>{
     const v=priceData[t.sym]?.pct;
@@ -331,9 +236,6 @@ function renderSummary(){
     avgs.sort((a,b)=>b.avg-a.avg);
     document.getElementById('s-best').textContent=avgs[0].name+' '+fmt(avgs[0].avg);
     document.getElementById('s-worst').textContent=avgs[avgs.length-1].name+' '+fmt(avgs[avgs.length-1].avg);
-  } else {
-    document.getElementById('s-best').textContent='—';
-    document.getElementById('s-worst').textContent='—';
   }
 }
 
@@ -365,22 +267,18 @@ function renderGrid(){
     const upC=vals.filter(v=>v>0).length, dnC=vals.filter(v=>v<0).length;
     const acCol=avg===null?'var(--border)':avg>0?'#16a34a':'#dc2626';
     const spId='sp_'+sec.name.replace(/\W/g,'_');
-    const loading=sec.tickers.some(t=>fetchStatus[t.sym]==='loading');
 
     const rows=vis.map(t=>{
-      const d=priceData[t.sym], v=d?.pct, obs=isObs(t.region);
-      const col=pctColor(v,obs);
+      const d=priceData[t.sym], v=d?.pct;
+      const col=pctColor(v);
       const fw=barW(v,10), fs=(v||0)>=0?'left:0':'right:0';
       const fc=v==null?'var(--dim)':v>0?'#16a34a':'#dc2626';
       const label=t.label||t.sym;
-      const volSpike=d?.volSpike;
-      const failed=fetchStatus[t.sym]==='fail';
-      return `<div class="t-row${obs?' obs':''}">
+      return `<div class="t-row">
         <span class="t-sym" title="${t.sym}">${FLAGS[t.region]||''} ${label}</span>
         <div class="t-bar"><div class="t-bar-fill" style="width:${fw};background:${fc};${fs}"></div></div>
-        <span class="t-pct" style="color:${col};${failed?'opacity:.4':''}">${fmt(v)}</span>
-        ${volSpike?'<span class="vol-tag">VOL↑</span>':''}
-        ${obs?'<span class="obs-badge">observe</span>':''}
+        <span class="t-pct" style="color:${col}">${fmt(v)}</span>
+        ${d?.vol_spike?'<span class="vol-tag">VOL↑</span>':''}
       </div>`;
     }).join('');
 
@@ -388,14 +286,13 @@ function renderGrid(){
       <div class="card-bar" style="background:${acCol}"></div>
       <div class="card-head">
         <div class="sec-name">${sec.name}</div>
-        <div class="sec-avg" style="color:${pctColor(avg,false)}">${fmt(avg)}</div>
+        <div class="sec-avg" style="color:${pctColor(avg)}">${fmt(avg)}</div>
       </div>
       <div class="spark-wrap"><canvas class="spark" id="${spId}"></canvas></div>
       <div class="bar-track"><div class="bar-fill" style="width:${barW(avg,5)};background:${acCol}"></div></div>
       <div class="counts"><span class="cpill"><span class="cup">${upC}</span> up</span><span class="cpill"><span class="cdn">${dnC}</span> down</span></div>
       <div class="divider"></div>
       <div class="ticker-list">${rows}</div>
-      ${loading?'<div class="loading-ov"><div class="spinner"></div>Fetching…</div>':''}
     `;
     grid.appendChild(card);
     const hist=histData[sec.name];
@@ -404,68 +301,57 @@ function renderGrid(){
   renderSummary();
 }
 
-function updateStatusPanel(ok, fail){
-  const panel=document.getElementById('status-panel');
-  if(fail.length===0){ panel.style.display='none'; return; }
-  panel.style.display='flex';
-  panel.innerHTML=`<span>Fetch results:</span> <span class="status-ok">✓ ${ok} loaded</span> <span class="status-fail">✗ ${fail.length} failed: ${fail.slice(0,8).join(', ')}${fail.length>8?'…':''}</span>`;
-}
+// Parse the snapshot output from semicon_fetch.py
+function parseSnapshot(text){
+  const lines = text.split('\n');
+  let currentSec = null;
 
-async function fetchAll(){
-  const btn=document.getElementById('ref-btn'), dot=document.getElementById('dot'), txt=document.getElementById('status-txt');
-  btn.disabled=true; dot.className='dot live'; txt.textContent='fetching…'; setProgress(5);
+  for(const raw of lines){
+    const line = raw.trim();
 
-  // Flatten unique tickers
-  const allT=[];
-  SECTORS.forEach(sec=>sec.tickers.forEach(t=>{ if(!allT.find(x=>x.sym===t.sym)) allT.push(t); }));
+    // Detect sector header: [Sector Name] avg: +X.XX%
+    const secMatch = line.match(/^\[(.+?)\]\s+avg:/);
+    if(secMatch){ currentSec = secMatch[1]; continue; }
 
-  // Mark all loading
-  allT.forEach(t=>{ fetchStatus[t.sym]='loading'; });
-  renderGrid();
-
-  // Fetch with concurrency limit of 8 to avoid overwhelming Yahoo
-  const CONCURRENCY=8;
-  let idx=0, done=0, okCount=0;
-  const failed=[];
-
-  async function worker(){
-    while(idx<allT.length){
-      const t=allT[idx++];
-      try{
-        const {pct,volume,avgVolume,volSpike,hist5}=await fetchYahoo(t.yf);
-        priceData[t.sym]={pct,volume,avgVolume,volSpike};
-        fetchStatus[t.sym]='ok';
-        okCount++;
-        // Build sector sparkline from first successful ticker per sector
-        const sec=SECTORS.find(s=>s.tickers.find(x=>x.sym===t.sym));
-        if(sec && !histData[sec.name] && hist5.length>=2){
-          const base=hist5[0];
-          histData[sec.name]=hist5.map(v=>((v-base)/base)*100);
-        }
-      } catch(e){
-        priceData[t.sym]={pct:null,volume:null,avgVolume:null,volSpike:false};
-        fetchStatus[t.sym]='fail';
-        failed.push(t.label||t.sym);
+    // Detect ticker row: flag symbol pct [VOL↑]
+    // Format: "  🇺🇸 NVDA               +1.23%  [VOL↑]"
+    if(!currentSec) continue;
+    const tickerMatch = line.match(/([A-Z0-9]+)\s+([\+\-—]\d*\.?\d*%?)\s*(.*)/);
+    if(tickerMatch){
+      const sym = tickerMatch[1];
+      const pctStr = tickerMatch[2];
+      const rest = tickerMatch[3];
+      const pct = pctStr === '—' ? null : parseFloat(pctStr.replace('%',''));
+      const vol_spike = rest.includes('VOL↑');
+      if(sym && sym.length >= 2 && sym.length <= 8){
+        priceData[sym] = {pct, vol_spike};
       }
-      done++;
-      setProgress(5+(done/allT.length)*90);
-      // Re-render every 8 completions for live feel
-      if(done%8===0) renderGrid();
     }
   }
 
-  // Run workers
-  await Promise.all(Array.from({length:CONCURRENCY},()=>worker()));
+  // Extract timestamp
+  const tsMatch = text.match(/Generated:\s*(.+)/);
+  if(tsMatch){
+    document.getElementById('last-update').textContent = 'Data from: ' + tsMatch[1];
+  }
+}
 
+function showPasteDialog(){
+  const overlay = document.getElementById('paste-overlay');
+  overlay.style.display='flex';
+  document.getElementById('paste-area').focus();
+}
+function closePasteDialog(){
+  document.getElementById('paste-overlay').style.display='none';
+  document.getElementById('paste-area').value='';
+}
+function loadSnapshot(){
+  const text = document.getElementById('paste-area').value.trim();
+  if(!text){ showToast('Nothing pasted — try again'); return; }
+  parseSnapshot(text);
   renderGrid();
-  updateStatusPanel(okCount, failed);
-  setProgress(100);
-  btn.disabled=false; dot.className='dot'; txt.textContent='idle';
-  const now=new Date();
-  document.getElementById('last-update').textContent=
-    'Last refresh: '+now.toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'})+
-    ' · '+now.toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'});
-  setTimeout(()=>setProgress(0),1000);
+  closePasteDialog();
+  showToast('Data loaded successfully');
 }
 
 function setRegion(r,el){
@@ -473,26 +359,18 @@ function setRegion(r,el){
   document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active'); renderGrid();
 }
-function toggleTrade(){
-  tradeOnly=!tradeOnly;
-  const btn=document.getElementById('trade-btn');
-  btn.className='trade-btn'+(tradeOnly?' on':'');
-  btn.textContent=tradeOnly?'👁 All tickers':'👁 Tradeable only';
-  renderGrid();
-}
 
 function copyForClaude(){
   const now=new Date();
-  const timeStr=now.toLocaleString('en-MY',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
   const lines=[];
   lines.push('=== SEMICON SECTOR MONITOR — EOD SNAPSHOT ===');
-  lines.push('Generated: '+timeStr+' MYT');
+  lines.push('Exported: '+now.toLocaleString('en-MY',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+' MYT');
   lines.push('');
   const allT=[]; SECTORS.forEach(sec=>sec.tickers.forEach(t=>{ if(!allT.find(x=>x.sym===t.sym)) allT.push(t); }));
   const withData=allT.filter(t=>priceData[t.sym]?.pct!==null&&priceData[t.sym]?.pct!==undefined);
   const up=withData.filter(t=>priceData[t.sym].pct>0).length;
   const dn=withData.filter(t=>priceData[t.sym].pct<0).length;
-  lines.push(`SUMMARY: ${SECTORS.length} sectors | ${withData.length} tickers loaded | ${up} advancing | ${dn} declining`);
+  lines.push(`SUMMARY: ${SECTORS.length} sectors | ${withData.length} tickers | ${up} advancing | ${dn} declining`);
   lines.push('');
   const avgs=SECTORS.map(s=>({name:s.name,avg:secAvg(s)})).filter(s=>s.avg!==null);
   avgs.sort((a,b)=>b.avg-a.avg);
@@ -500,7 +378,7 @@ function copyForClaude(){
   avgs.forEach((s,i)=>lines.push(`  ${i+1}. ${s.name}: ${fmt(s.avg)}`));
   lines.push('');
   const spikes=[];
-  SECTORS.forEach(sec=>sec.tickers.forEach(t=>{ if(priceData[t.sym]?.volSpike) spikes.push((t.label||t.sym)+' ['+sec.name+']'); }));
+  SECTORS.forEach(sec=>sec.tickers.forEach(t=>{ if(priceData[t.sym]?.vol_spike) spikes.push((t.label||t.sym)+' ['+sec.name+']'); }));
   if(spikes.length){ lines.push('VOLUME SPIKES: '+spikes.join(', ')); lines.push(''); }
   lines.push('--- SECTOR DETAIL ---');
   SECTORS.forEach(sec=>{
@@ -509,9 +387,8 @@ function copyForClaude(){
     sec.tickers.forEach(t=>{
       const d=priceData[t.sym], v=d?.pct;
       const label=(t.label||t.sym).padEnd(16);
-      const obs=isObs(t.region)?'[observe]':'';
-      const vol=d?.volSpike?'[VOL↑]':'';
-      lines.push(`  ${FLAGS[t.region]||''} ${label} ${fmt(v).padStart(8)}  ${vol}${obs}`);
+      const vol=d?.vol_spike?'[VOL↑]':'';
+      lines.push(`  ${FLAGS[t.region]||''} ${label} ${fmt(v).padStart(8)}  ${vol}`);
     });
   });
   lines.push('');
@@ -520,20 +397,19 @@ function copyForClaude(){
   lines.push('Please provide an EOD analysis covering:');
   lines.push('1. Sector rotation — which sectors led and lagged, any divergence');
   lines.push('2. Standout movers — biggest individual % moves, especially with VOL↑ confirmation');
-  lines.push('3. Regional divergence — US vs Taiwan/HK/Japan/Korea splits');
+  lines.push('3. Regional divergence — US vs Taiwan/HK/Japan splits');
   lines.push('4. BTM Energy vs Semicon — any macro signal in their relative performance');
   lines.push('5. Flags for the next session — anything worth watching or acting on');
 
   navigator.clipboard.writeText(lines.join('\n')).then(()=>{
     const btn=document.getElementById('copy-btn');
     btn.textContent='✓ Copied!'; btn.classList.add('copied');
-    showToast('Snapshot copied — paste into Claude for EOD report');
+    showToast('Snapshot copied — paste into Claude');
     setTimeout(()=>{ btn.textContent='Copy for Claude'; btn.classList.remove('copied'); },2500);
   }).catch(()=>showToast('Copy failed — try again'));
 }
 
 renderGrid();
-fetchAll();
 </script>
 </body>
 </html>
